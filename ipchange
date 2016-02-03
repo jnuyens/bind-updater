@@ -1,20 +1,24 @@
 #!/bin/bash
 #version 2.0
-#use like this on the client of which the public facing IP might change: ./ipchange location 
+#use like this on the client of which the public facing IP might change: ./ipchange user@DNSserver location 
 #or ./ipchange location2
 # the location should match with the hostname you want to change at your DNS server
+# ensure you can connect with ssh without password to user@DNSserver from the user which runs this crontab every x minutes
+# I imagine you can enter crontab entries :)
 
-if [ $# != 1 ]
+if [ $# != 2 ]
 then
- echo Error: Usage ./ipchange muizen or ./ipchange diegem
+ echo Error: Usage ./ipchange user@DNSserver location
  exit 2
 fi
+
+server=$1
 
 ip=`wget -O- http://www.whatip.org 2> /dev/null | grep -i "Your IP Address Is" | awk -F\> '{ print $3 }' | sed sT\</fontTT`
 oldip=`cat /tmp/oldip`
 
 if [ "$ip" != "$oldip" ]
 then
- ssh root@m1.linuxbe.com  "/newdns.sh $1 $ip" 
+ ssh $server  "/newdns.sh $2 $ip" 
  echo $ip >  /tmp/oldip
 fi
