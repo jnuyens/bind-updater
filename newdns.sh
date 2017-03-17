@@ -18,4 +18,4 @@ serial=$(grep serial $3 | awk '{ print $1 }')
 newserial=$(($serial+1))
 sed -i s/$serial/$newserial/  $3
 
-/etc/init.d/bind9 restart
+/etc/init.d/bind9 reload
